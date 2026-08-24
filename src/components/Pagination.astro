@@ -1,0 +1,66 @@
+---
+/** 1ページ50件。ページ番号とその前後、両端、間は「…」。 */
+import { viewPath, type ViewSlug } from '../lib/categories';
+import { PAGE_SIZE } from '../lib/ranking';
+import { num } from '../lib/format';
+
+interface Props {
+  view: ViewSlug;
+  page: number;
+  pages: number;
+  total: number;
+}
+
+const { view, page, pages, total } = Astro.props;
+
+const window = new Set<number>([1, pages, page - 1, page, page + 1]);
+const numbers = [...window].filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
+
+const cells: Array<number | 'gap'> = [];
+let previous = 0;
+for (const n of numbers) {
+  if (previous && n - previous > 1) cells.push('gap');
+  cells.push(n);
+  previous = n;
+}
+
+const from = (page - 1) * PAGE_SIZE + 1;
+const to = Math.min(page * PAGE_SIZE, total);
+---
+
+<div class="pager">
+  {
+    page > 1 ? (
+      <a href={viewPath(view, page - 1)} rel="prev" aria-label="前へ">‹</a>
+    ) : (
+      <span class="off" aria-hidden="true">‹</span>
+    )
+  }
+  {
+    cells.map((cell) =>
+      cell === 'gap' ? (
+        <span class="gap" aria-hidden="true">…</span>
+      ) : cell === page ? (
+        <span class="cur lat" aria-current="page">{cell}</span>
+      ) : (
+        <a class="lat" href={viewPath(view, cell)} aria-label={`${cell}ページ目`}>{cell}</a>
+      ),
+    )
+  }
+  {
+    pages > page ? (
+      <a href={viewPath(view, page + 1)} rel="next" aria-label="次へ">›</a>
+    ) : (
+      <span class="off" aria-hidden="true">›</span>
+    )
+  }
+</div>
+<p class="count lat">{num(from)} – {num(to)} / {num(total)}件</p>
+<div class="refresh-wrap">
+  <a class="refresh" href={viewPath(view, page)}>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M21 12a9 9 0 1 1-2.6-6.4"></path>
+      <path d="M21 3v6h-6"></path>
+    </svg>更新
+  </a>
+</div>

@@ -1,0 +1,30 @@
+---
+/** ランキング本体。上位3件はカード、4位以降は行。 */
+import type { ViewSlug } from '../lib/categories';
+import type { Board } from '../lib/ranking';
+import ListingCard from './ListingCard.astro';
+import ListingRow from './ListingRow.astro';
+import EmptyState from './EmptyState.astro';
+import Pagination from './Pagination.astro';
+
+interface Props {
+  view: ViewSlug;
+  board: Board;
+}
+
+const { view, board } = Astro.props;
+---
+
+<section class="board">
+  {board.items.length === 0 && <EmptyState view={view} />}
+  {
+    board.items.map((item) =>
+      item.rank > 3 ? <ListingRow item={item} view={view} /> : <ListingCard item={item} view={view} />,
+    )
+  }
+  {
+    board.items.length > 0 && (
+      <Pagination view={view} page={board.page} pages={board.pages} total={board.total} />
+    )
+  }
+</section>

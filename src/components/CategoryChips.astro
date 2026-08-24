@@ -1,0 +1,29 @@
+---
+/**
+ * カテゴリチップ。押すと /c/:slug へ遷移し、ランキング・順位・見出しの文言と
+ * 金額・フォームのカテゴリ選択がまとめて切り替わる（4.6）。
+ */
+import { VIEWS, viewPath, type ViewSlug } from '../lib/categories';
+
+interface Props {
+  view: ViewSlug;
+}
+
+const { view } = Astro.props;
+---
+
+<div class="cats" id="cats" role="group" aria-label="カテゴリで絞り込む">
+  {
+    VIEWS.map((v) => (
+      <a
+        class="cat"
+        href={viewPath(v.slug)}
+        data-slug={v.slug}
+        aria-pressed={v.slug === view}
+        aria-current={v.slug === view ? 'page' : undefined}
+      >
+        {v.label}
+      </a>
+    ))
+  }
+</div>

@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import CategoryChips from '../components/CategoryChips.astro';
+import Board from '../components/Board.astro';
+import { ALL, pageTitle } from '../lib/categories';
+import { getDb } from '../lib/db';
+import { countAllActive, loadBoard, pageFromUrl } from '../lib/ranking';
+import { loadVisitorStats } from '../lib/visitors';
+
+const db = getDb(Astro.locals);
+const page = pageFromUrl(Astro.url);
+
+const [board, visitors, listingCount] = await Promise.all([
+  loadBoard(db, ALL, page),
+  loadVisitorStats(db),
+  countAllActive(db),
+]);
+---
+
+<Base title={pageTitle(ALL)}>
+  <Hero view={ALL} categoryTop={board.categoryTop} listingCount={listingCount} visitors={visitors} />
+  <CategoryChips view={ALL} />
+  <Board view={ALL} board={board} />
+</Base>

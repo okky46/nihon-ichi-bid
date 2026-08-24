@@ -1,0 +1,76 @@
+---
+import '../styles/tokens.css';
+import { SERVICE_DEFINITION, RANK_DISCLAIMER, SITE_NAME, TAGLINE } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = `${SITE_NAME} — ${TAGLINE}`, description = SERVICE_DEFINITION } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=M+PLUS+2:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a class="logo" href="/" aria-label={`${SITE_NAME} ホーム`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2" y="4.5" width="20" height="3.6" rx="1.8" fill="#E9654C"></rect>
+            <rect x="2" y="10.2" width="13.5" height="3.6" rx="1.8" fill="#1A1A1A"></rect>
+            <rect x="2" y="15.9" width="7.5" height="3.6" rx="1.8" fill="#C8C4BE"></rect>
+          </svg>
+          <span><span class="kaeru">買える</span>日本一</span>
+        </a>
+        <nav>
+          <a href="/">ランキング</a>
+          <a href="/rules" class="hide-sm">ルール</a>
+          <a href="/contact">問い合わせ</a>
+        </nav>
+      </header>
+
+      <slot />
+
+      <footer>
+        <p class="legal">{RANK_DISCLAIMER}</p>
+        <p>
+          <a href="/terms">利用規約</a> · <a href="/privacy">プライバシーポリシー</a> ·
+          <a href="/tokushoho">特定商取引法に基づく表記</a> · <a href="/contact">問い合わせ</a>
+        </p>
+      </footer>
+    </div>
+
+    {/* 6.6: HTML には Set-Cookie を載せない。セッションの発行はこのビーコンだけが行う。 */}
+    <script is:inline>
+      try {
+        fetch('/api/ping', { credentials: 'same-origin' });
+      } catch (_) {
+        /* 計測の失敗はページの表示に影響させない */
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+---
+/** 4位以降の行。順位はグレーの文字。 */
+import { ALL, labelOf, type ViewSlug } from '../lib/categories';
+import { relativeTime, yen } from '../lib/format';
+import type { RankedListing } from '../lib/ranking';
+
+interface Props {
+  item: RankedListing;
+  view: ViewSlug;
+}
+
+const { item, view } = Astro.props;
+---
+
+<div class="row">
+  <div class="rank"><span class="plain lat">#{item.rank}</span></div>
+  <div class="icon"></div>
+  <div class="body">
+    <div class="top">
+      <a class="name" href={item.url} rel="sponsored nofollow noopener" target="_blank">{item.title}</a>
+      <span class="price lat">{yen(item.amount)}</span>
+    </div>
+    {item.description && <p class="desc">{item.description}</p>}
+    <div class="meta">
+      {relativeTime(item.updated_at)}
+      {view === ALL && (
+        <>
+          <span class="sep">·</span>{labelOf(item.category as ViewSlug)}
+        </>
+      )}
+    </div>
+  </div>
+</div>

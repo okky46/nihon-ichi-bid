@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import CategoryChips from '../../components/CategoryChips.astro';
+import Board from '../../components/Board.astro';
+import { isCategory, labelOf, pageTitle } from '../../lib/categories';
+import { SERVICE_DEFINITION } from '../../lib/site';
+import { getDb } from '../../lib/db';
+import { countAllActive, loadBoard, pageFromUrl } from '../../lib/ranking';
+import { loadVisitorStats } from '../../lib/visitors';
+
+const { slug } = Astro.params;
+if (!isCategory(slug)) return Astro.redirect('/', 302);
+
+const db = getDb(Astro.locals);
+const page = pageFromUrl(Astro.url);
+
+const [board, visitors, listingCount] = await Promise.all([
+  loadBoard(db, slug, page),
+  loadVisitorStats(db),
+  countAllActive(db),
+]);
+
+const description = `${labelOf(slug)}部門のランキング。${SERVICE_DEFINITION}`;
+---
+
+<Base title={pageTitle(slug)} description={description}>
+  <Hero view={slug} categoryTop={board.categoryTop} listingCount={listingCount} visitors={visitors} />
+  <CategoryChips view={slug} />
+  <Board view={slug} board={board} />
+</Base>
