@@ -1,0 +1,27 @@
+name = "nihon-ichi-bid"
+main = "./dist/_worker.js/index.js"
+compatibility_date = "2025-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+# `database_id` is filled in after `wrangler d1 create nihon-ichi`.
+[[d1_databases]]
+binding = "DB"
+database_name = "nihon-ichi"
+database_id = ""
+migrations_dir = "migrations"
+
+# 6.6: 毎日1回、1時間より古いセッション行を削除し、削除件数を visitors_archived へ加算する。
+[triggers]
+crons = ["0 18 * * *"]
+
+[vars]
+PAYMENT_PROVIDER = "stripe"
+SITE_URL = "https://nihon-ichi.com"
+CONTACT_EMAIL = "contact@nihon-ichi.com"

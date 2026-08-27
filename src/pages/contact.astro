@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_NAME, DEFAULT_CONTACT_EMAIL } from '../lib/site';
+import { getEnv } from '../lib/db';
+
+const contact = getEnv(Astro.locals).CONTACT_EMAIL ?? DEFAULT_CONTACT_EMAIL;
+---
+
+<Base title={`問い合わせ — ${SITE_NAME}`} description={`${SITE_NAME}へのお問い合わせ`}>
+  <article class="prose">
+    <h1>問い合わせ</h1>
+
+    <div class="callout">
+      <p>
+        お問い合わせは <a href={`mailto:${contact}`}>{contact}</a> までメールでお願いします。
+      </p>
+    </div>
+
+    <h2>掲載の削除をご希望の方へ</h2>
+    <p>
+      掲載されたご本人、または権利者からの削除のご依頼を受け付けています。
+      ご本人確認のため、決済に用いたメールアドレスからご連絡ください。
+      権利侵害を理由とするご依頼の場合は、対象の掲載のURLと、侵害されている権利の内容をお知らせください。
+    </p>
+
+    <h2>掲載内容についてのご報告</h2>
+    <p>
+      違法な内容、なりすまし、詐欺、成人向けの内容など、掲載として不適切なものを見つけられた場合も
+      同じ宛先へご連絡ください。対象の掲載のURLを添えていただけると確認が早く済みます。
+    </p>
+
+    <h2>そのほか</h2>
+    <p>
+      ランキングの仕組みや料金については<a href="/rules">ルール</a>、
+      規約上の取り扱いについては<a href="/terms">利用規約</a>をご覧ください。
+    </p>
+  </article>
+</Base>

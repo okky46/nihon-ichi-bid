@@ -1,0 +1,17 @@
+---
+/** 掲載が1件もないカテゴリ。100円で1位を取れることを伝える（4.6）。 */
+import { labelOf, type ViewSlug } from '../lib/categories';
+import { MIN_AMOUNT } from '../lib/pricing';
+import { yen } from '../lib/format';
+
+interface Props {
+  view: ViewSlug;
+}
+
+const { view } = Astro.props;
+---
+
+<div class="empty">
+  このカテゴリにはまだ何も掲載されていません。<br />
+  いま掲載すれば <b class="lat">{yen(MIN_AMOUNT)}</b> で「{labelOf(view)}」の1位です。
+</div>
